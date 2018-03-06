@@ -1,7 +1,6 @@
 import os
-from setuptools import setup
+from setuptools import setup, Command, find_packages
 from subprocess import CalledProcessError, call, check_call
-from setuptools import Command
 from abc import abstractmethod
 
 
@@ -37,6 +36,17 @@ class SimpleCommand(Command):
         pass
 
 
+class TestCoverage(SimpleCommand):
+    """Display test coverage."""
+
+    description = 'run unit tests and display code coverage'
+
+    def run(self):
+        """Run unittest quietly and display coverage report."""
+        cmd = 'coverage run setup.py test && coverage report -m'
+        check_call(cmd, shell=True)
+
+
 class Linter(SimpleCommand):
     """Lint Python source code."""
 
@@ -70,19 +80,22 @@ setup(
     extras_require={
         'dev':[
                     'ipython',
+                    'coverage',
                     'yala',
                     'pylint',
                     'pytest-runner',
         ]
     },
     cmdclass={
-        'lint': Linter
+        'lint': Linter,
+        'coverage': TestCoverage
     },
+    test_suite='tests',
     tests_require=['pytest'],
     license = "",
     keywords = "image processor ",
     url = "",
-    packages=['iprocessor'],
+    packages=find_packages(exclude=['tests']),
     long_description=read('README.rst'),
     classifiers=[
         "Development Status :: 1 - Planning"
