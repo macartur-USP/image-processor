@@ -71,4 +71,39 @@ class TestImageProcessor(unittest.TestCase):
                           [4,5,7,1,2],
                           [8,5,1,2,5]], dtype=np.uint8)
 
-        self.assertEqual(4.030162598968484, TextureProcessor.entropy(image))
+        entropy = TextureProcessor.entropy(image)
+        expected_entropy = [[2.72321967, 2.72321967, 2.72321967, 2.72321967, 2.72321967],
+                            [2.72321967, 2.72321967, 2.72321967, 2.72321967, 2.72321967],
+                            [2.72321967, 2.72321967, 2.72321967, 2.72321967, 2.72321967],
+                            [2.72321967, 2.72321967, 2.72321967, 2.72321967, 2.72321967]]
+
+        self.assertTrue(np.allclose(entropy,expected_entropy))
+
+    def test_get_texture_features(self):
+        """Test get texture features"""
+        image = np.array([[1,1,5,6,8],
+                          [2,3,5,7,1],
+                          [4,5,7,1,2],
+                          [8,5,1,2,5]], dtype=np.uint8)
+        features = TextureProcessor.get_texture_features(image)
+        self.assertEqual(features.shape, (4,226))
+
+    def test_get_texture_features_with_15_x_15_image(self):
+        """Test get texture features with image with 15x15 pixels."""
+        image = np.array([[1,1,5,6,8,1,1,5,6,8,1,1,5,6,8],
+                          [2,3,5,7,1,2,3,5,7,1,2,3,5,7,1],
+                          [4,5,7,1,2,4,5,7,1,2,4,5,7,1,2],
+                          [8,5,1,2,5,8,5,1,2,5,8,5,1,2,5],
+                          [1,1,5,6,8,1,1,5,6,8,1,1,5,6,8],
+                          [2,3,5,7,1,2,3,5,7,1,2,3,5,7,1],
+                          [4,5,7,1,2,4,5,7,1,2,4,5,7,1,2],
+                          [8,5,1,2,5,8,5,1,2,5,8,5,1,2,5],
+                          [1,1,5,6,8,1,1,5,6,8,1,1,5,6,8],
+                          [2,3,5,7,1,2,3,5,7,1,2,3,5,7,1],
+                          [4,5,7,1,2,4,5,7,1,2,4,5,7,1,2],
+                          [8,5,1,2,5,8,5,1,2,5,8,5,1,2,5],
+                          [1,1,5,6,8,1,1,5,6,8,1,1,5,6,8],
+                          [2,3,5,7,1,2,3,5,7,1,2,3,5,7,1],
+                          [4,5,7,1,2,4,5,7,1,2,4,5,7,1,2]], dtype=np.uint8)
+        features = TextureProcessor.get_texture_features(image)
+        self.assertEqual(features.shape, (15,606))
