@@ -3,44 +3,8 @@ import os
 import unittest
 import numpy
 from pathlib import Path
-from iprocessor.base.processor import ImageProcessor, ColorProcessor
-from skimage.exposure import histogram
-from skimage import data, color
-
-
-class TestColorProcessor(unittest.TestCase):
-    """Test Suite for ColorProcessor class."""
-
-    def setUp(self):
-        """SetUp the tests."""
-        self.image = data.astronaut()
-        self.image_hsv = color.rgb2hsv(self.image)
-
-    def test_convert_rgb_to_hsv(self):
-        """Test convert rgb to hsv."""
-        converted = ColorProcessor.convert_rgb_to_hsv(self.image)
-        self.assertTrue(numpy.allclose(converted, self.image_hsv))
-
-    def test_create_histogram(self):
-        """Test create histogram using first color feacture."""
-        image = self.image[0:self.image.shape[0], 0: self.image.shape[1],0]
-        ex, ey = histogram(image, nbins=15)
-        x, y = ColorProcessor.create_histogram(self.image, feacture=0)
-        self.assertTrue((x == ex).all())
-        self.assertTrue(numpy.allclose(y,ey))
-
-    def test_create_color_histograms(self):
-        """Test create color histogram for all hsv color space channels."""
-        result = ColorProcessor.create_color_histograms(self.image)
-        for n in range(3):
-            image = self.image[0:self.image.shape[0], 0: self.image.shape[1],n]
-            ex, ey = histogram(image, nbins=15)
-
-            x = result[n][0]
-            y = result[n][1]
-
-            self.assertTrue((x == ex).all())
-            self.assertTrue(numpy.allclose(y, ey))
+from iprocessor.base.processor import ImageProcessor
+from iprocessor.base.color_processor import ColorProcessor
 
 
 
@@ -84,9 +48,9 @@ class TestImageProcessor(unittest.TestCase):
         self.assertEqual(len(image_blocks), 352)
 
     def test_create_color_histogram(self):
-        """Test whether the color histogram with tree feactures are created.
+        """Test whether the color histogram with tree features are created.
 
-        The feactures are Hue, saturation and value.
+        The features are Hue, saturation and value.
         """
         self.image_processor.pre_process()
         image_blocks = self.image_processor.split_in_blocks()
@@ -97,12 +61,12 @@ class TestImageProcessor(unittest.TestCase):
     def test_create_histogram(self):
         """Verify whether the some image block have the expected values.
 
-        The histogram using the hue feacture is created and the x, y values are
+        The histogram using the hue feature is created and the x, y values are
         verified.
         """
         self.image_processor.pre_process()
         block = self.image_processor.split_in_blocks()[341]
-        x,y = ColorProcessor.create_histogram(block, feacture=0)
+        x,y = ColorProcessor.create_histogram(block, feature=0)
         expected_x = [167, 6, 1, 7, 1, 10, 2, 2, 5, 0, 2, 8, 2, 3, 9]
         expected_y = [0.03287982, 0.09863946, 0.16439909, 0.23015873,
                       0.29591837, 0.361678, 0.42743764, 0.49319728, 0.55895692,
