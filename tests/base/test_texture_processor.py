@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 from iprocessor.base.texture_processor import TextureProcessor
 from skimage.feature import greycomatrix
-
+from skimage import data
 
 
 class TestImageProcessor(unittest.TestCase):
@@ -42,3 +42,33 @@ class TestImageProcessor(unittest.TestCase):
                            [193., 99., 0., 255., 104.],
                            [0., 30., 63., 11., 0.]]
         self.assertTrue(np.allclose(result, expected_result))
+
+    def test_gabor_filter(self):
+        """Test Texture gabor filter method."""
+        image = np.array([[1,1,5,6,8],
+                          [2,3,5,7,1],
+                          [4,5,7,1,2],
+                          [8,5,1,2,5]], dtype=np.uint8)
+        real, img = TextureProcessor.gabor_filter(image, frequency=1, theta=0)
+
+        expected_real = [[1, 1, 4, 6, 6],
+                         [2, 3, 5, 5, 2],
+                         [4, 4, 5, 2, 2],
+                         [7, 4, 2, 2, 4]]
+
+        expected_imaginary = [[0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0],
+                              [0, 0, 0, 0, 0]]
+
+        self.assertTrue((real == expected_real).all())
+        self.assertTrue((img == expected_imaginary).all())
+
+    def test_entropy(self):
+        """Test Texture entropy method."""
+        image = np.array([[1,1,5,6,8],
+                          [2,3,5,7,1],
+                          [4,5,7,1,2],
+                          [8,5,1,2,5]], dtype=np.uint8)
+
+        self.assertEqual(4.030162598968484, TextureProcessor.entropy(image))
