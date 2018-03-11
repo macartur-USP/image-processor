@@ -5,11 +5,12 @@ from skimage import color, exposure
 class ColorProcessor:
     """Class to process color space from images."""
 
+    @staticmethod
     def convert_rgb_to_hsv(image):
         """Convert a image to hsv color space."""
         return color.rgb2hsv(image)
 
-
+    @staticmethod
     def convert_rgb_to_grey(image):
         """Convert a image to grey scale color space."""
         return color.rgb2grey(image)

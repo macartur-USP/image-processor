@@ -1,8 +1,9 @@
 """Modulo to process texture."""
-from numpy import pi, hstack, ravel
-from skimage.morphology import disk
+from numpy import hstack, pi
+from skimage.feature import greycomatrix, greycoprops, local_binary_pattern
 from skimage.filters import gabor, rank
-from skimage.feature import greycomatrix, local_binary_pattern, greycoprops
+from skimage.morphology import disk
+
 from .color_processor import ColorProcessor
 
 
@@ -22,30 +23,30 @@ class TextureProcessor:
         """
         entropy = TextureProcessor.entropy(image)
         lbp = TextureProcessor.local_binary_pattern(image)
-        features = TextureProcessor.get_coocorrence_matrix_properties(image)
-        gabor = TextureProcessor.get_gabor_properties(image)
+        features = TextureProcessor.coocorrence_matrix_properties(image)
+        gabor_properties = TextureProcessor.get_gabor_properties(image)
 
-        return hstack([features, entropy, lbp, gabor])
+        return hstack([features, entropy, lbp, gabor_properties])
 
     @staticmethod
     def get_gabor_properties(image):
-        """ Get all properties from gabor filter.
+        """Get all properties from gabor filter.
 
         - gabor filter with the parameters:
             - frequency: 1, 2**(1/5), 2
             - theta = [0, 30, 45, 60, 90]
-
         """
         frequencies = [1, 2**(1/5), 2]
-        theta = [0, pi/6, pi/4, pi/3, pi/2, pi]
-        gabor = []
+        angles = [0, pi/6, pi/4, pi/3, pi/2, pi]
+        values = []
         for freq in frequencies:
-            for t in  theta:
-                gabor.extend(TextureProcessor.gabor_filter(image,freq, t))
-        return hstack(gabor)
+            for angle in angles:
+                values.extend(TextureProcessor.gabor_filter(image, freq,
+                                                            angle))
+        return hstack(values)
 
     @staticmethod
-    def get_coocorrence_matrix_properties(image):
+    def coocorrence_matrix_properties(image):  # pylint-disable=invalid-name
         """Create features based on image gray level.
 
         The properties extracted are:
@@ -57,7 +58,7 @@ class TextureProcessor:
             - correlation
         """
         image_grey = ColorProcessor.convert_rgb_to_grey(image)
-        props = ['contrast', 'homogeneity','dissimilarity',
+        props = ['contrast', 'homogeneity', 'dissimilarity',
                  'ASM', 'correlation', 'energy']
         matrix = TextureProcessor.coocorrence_matrix(image_grey)
         return hstack([greycoprops(matrix, prop) for prop in props])
@@ -72,7 +73,7 @@ class TextureProcessor:
             - orientation = [0, 30, 45, 60, 90, 180] in radian
         """
         image_grey = ColorProcessor.convert_rgb_to_grey(image)
-        distances = [x for x in range(1,image.shape[0]+1) ]
+        distances = [x for x in range(1, image.shape[0]+1)]
         angles = [0, pi/6, pi/4, pi/3, pi/2, pi]
         return greycomatrix(image_grey, distances, angles, levels=levels)
 
@@ -83,7 +84,7 @@ class TextureProcessor:
         The function LBP will use P=8 and R=1.0
         """
         image_grey = ColorProcessor.convert_rgb_to_grey(image)
-        return local_binary_pattern(image, P=8, R=1.0, method='default')
+        return local_binary_pattern(image_grey, P=8, R=1.0, method='default')
 
     @staticmethod
     def entropy(image):
@@ -98,6 +99,7 @@ class TextureProcessor:
     @staticmethod
     def gabor_filter(image, frequency=1, theta=0):
         """Execute Gabor filter to extract texture feature.
+
         Args:
             frequency(float): frequency to calculate gabor filter method
             theta(float): angle to calculate gabor filter method

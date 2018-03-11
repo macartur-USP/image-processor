@@ -1,6 +1,8 @@
 """Module to process images."""
 from skimage.io import imread
+
 from .color_processor import ColorProcessor
+
 
 class ImageProcessor:
     """Class to manupulate image for pre and pos process."""
@@ -41,7 +43,7 @@ class ImageProcessor:
         for line in range(0, self.resize_shape[1], new_size):
             for column in range(0, self.resize_shape[0], new_size):
                 image_blocks.append(self.image[line:line+new_size,
-                                         column:column+new_size])
+                                               column:column+new_size])
         return image_blocks
 
     def extract_features(self):
