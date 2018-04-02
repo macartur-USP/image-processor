@@ -3,7 +3,7 @@ from pathlib import Path
 from urllib import request
 
 
-class Source():  # pylint: disable=too-few-public-methods
+class Source:  # pylint: disable=too-few-public-methods
     """Base class to downlaod and store analyze images from source."""
 
     server = None

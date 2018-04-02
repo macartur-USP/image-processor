@@ -1,7 +1,9 @@
 """Module to process images."""
+from numpy import hstack
 from skimage.io import imread
 
 from .color_processor import ColorProcessor
+from .texture_processor import TextureProcessor
 
 
 class ImageProcessor:
@@ -48,4 +50,6 @@ class ImageProcessor:
 
     def extract_features(self):
         """Extract all features from image setted."""
-        pass
+        color_feactures = ColorProcessor.create_color_histograms(image)
+        texture_feactures = TextureProcessor.get_texture_features(image)
+        return hstack(color_feactures, texture_feactures)
