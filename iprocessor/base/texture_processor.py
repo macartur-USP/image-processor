@@ -1,32 +1,14 @@
 """Modulo to process texture."""
 from numpy import hstack, pi
-from skimage.feature import greycomatrix, greycoprops, local_binary_pattern
+from skimage.feature import local_binary_pattern
 from skimage.filters import gabor, rank
 from skimage.morphology import disk
+from skimage import util
 
 from .color_processor import ColorProcessor
 
-
 class TextureProcessor:
     """Class to process Texture from image."""
-
-    @staticmethod
-    def get_texture_features(image):
-        """Create a texture features.
-
-        This method will create texture features using:
-
-            - local_binary_pattern:
-            - entropy
-            - coocorrence matrix
-            - gabor filter
-        """
-        entropy = TextureProcessor.entropy(image)
-        lbp = TextureProcessor.local_binary_pattern(image)
-        features = TextureProcessor.coocorrence_matrix_properties(image)
-        gabor_properties = TextureProcessor.get_gabor_properties(image)
-
-        return hstack([features, entropy, lbp, gabor_properties])
 
     @staticmethod
     def get_gabor_properties(image):
@@ -41,41 +23,10 @@ class TextureProcessor:
         values = []
         for freq in frequencies:
             for angle in angles:
-                values.extend(TextureProcessor.gabor_filter(image, freq,
-                                                            angle))
+                real, img = TextureProcessor.gabor_filter(image, freq,
+                                                            angle)
+                values.append(real.reshape((225,1)))
         return hstack(values)
-
-    @staticmethod
-    def coocorrence_matrix_properties(image):  # pylint-disable=invalid-name
-        """Create features based on image gray level.
-
-        The properties extracted are:
-            - contrast
-            - dissimilarity
-            - homogeneity
-            - ASM (Angular Second Moment)
-            - energy
-            - correlation
-        """
-        image_grey = ColorProcessor.convert_rgb_to_grey(image)
-        props = ['contrast', 'homogeneity', 'dissimilarity',
-                 'ASM', 'correlation', 'energy']
-        matrix = TextureProcessor.coocorrence_matrix(image_grey)
-        return hstack([greycoprops(matrix, prop) for prop in props])
-
-    @staticmethod
-    def coocorrence_matrix(image, levels=256):
-        """Calculate the coocorrence matrix of a image.
-
-        distance = 1,2,3
-        This process will use:
-            - distance = [1,2,3,4]
-            - orientation = [0, 30, 45, 60, 90, 180] in radian
-        """
-        image_grey = ColorProcessor.convert_rgb_to_grey(image)
-        distances = [x for x in range(1, image.shape[0]+1)]
-        angles = [0, pi/6, pi/4, pi/3, pi/2, pi]
-        return greycomatrix(image_grey, distances, angles, levels=levels)
 
     @staticmethod
     def local_binary_pattern(image):
@@ -87,14 +38,13 @@ class TextureProcessor:
         return local_binary_pattern(image_grey, P=8, R=1.0, method='default')
 
     @staticmethod
-    def entropy(image):
+    def entropy(image, channel=0):
         """Calculate the image entropy.
 
         Args:
             image(ndarray): image representation as array.
         """
-        image_grey = ColorProcessor.convert_rgb_to_grey(image)
-        return rank.entropy(image_grey, disk(5))
+        return rank.entropy(image[:,:, channel], disk(5))
 
     @staticmethod
     def gabor_filter(image, frequency=1, theta=0):

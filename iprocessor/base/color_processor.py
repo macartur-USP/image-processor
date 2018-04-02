@@ -1,6 +1,7 @@
 """Modulo to process color."""
-from skimage import color, exposure
-
+from skimage import color, util, exposure
+from numpy import array
+from PIL import Image
 
 class ColorProcessor:
     """Class to process color space from images."""
@@ -13,7 +14,8 @@ class ColorProcessor:
     @staticmethod
     def convert_rgb_to_grey(image):
         """Convert a image to grey scale color space."""
-        return color.rgb2grey(image)
+        gray = Image.fromarray(image)
+        return array(gray.convert('L'))
 
     @staticmethod
     def create_color_histograms(image, nbins=15):
