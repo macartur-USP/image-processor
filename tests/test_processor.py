@@ -1,10 +1,10 @@
-"""Module to test iprocessor.base.processor."""
+"""Module to test iprocessor.processor."""
 import os
 import unittest
 import numpy
 from pathlib import Path
-from iprocessor.base.processor import ImageProcessor
-from iprocessor.base.color_processor import ColorProcessor
+from iprocessor.processor import ImageProcessor
+from iprocessor.color_processor import ColorProcessor
 
 
 

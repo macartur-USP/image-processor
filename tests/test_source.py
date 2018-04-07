@@ -1,10 +1,10 @@
-"""Module to test iprocessor.base.source."""
+"""Module to test iprocessor.source."""
 import unittest
-from iprocessor.base.source import Source
+from iprocessor.source import Source
 
 
 class TestSource(unittest.TestCase):
-    """Test Suite for iprocessor.base.source."""
+    """Test Suite for iprocessor.source."""
 
     def setUp(self):
         """Create a source instance."""

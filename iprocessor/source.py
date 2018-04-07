@@ -1,8 +1,10 @@
 """Basic class to download images from source."""
+import os
 from pathlib import Path
 from urllib import request
 from urllib.parse import urlencode
 from mapbox import Static
+
 
 class ImageNet:
 
@@ -33,7 +35,7 @@ class ImageNet:
                 urls_error.append(url)
 
 class MapBox:
-    def __init__(self, service, access_token):
+    def __init__(self, service=None, access_token=None):
         """Built a instance of mapbox.
 
         References: https://www.mapbox.com/api-documentation/#maps
@@ -71,7 +73,7 @@ class MapBox:
 
 class Google:
 
-    def __init__(self, service, access_token):
+    def __init__(self, service=None, access_token=None):
         """Built a instance of google.
 
         Args:
@@ -81,16 +83,17 @@ class Google:
         """
         self.server = 'https://maps.googleapis.com'
         self.service = service or 'staticmap'
-        self.api_address = f'{self.server}/maps/api/{service}'
+        self.api_address = f'{self.server}/maps/api/{self.service}'
         self.token = access_token or ""
-        self.destination = f'/tmp/google_maps/{service}'
+        self.destination = f'/tmp/google_maps/{self.service}'
+        os.makedirs(self.destination,exist_ok=True)
 
     def download(self, coordinate=('0','0'), params={}):
         """Download an image based on coordinate.
         Args:
          coordinate: (lat,lon):
          params: Dict with the following attributes.
-                 maptype
+                 maptype(satellite)
                  zoom
                  size
                  key

@@ -25,7 +25,8 @@ class TextureProcessor:
             for angle in angles:
                 real, img = TextureProcessor.gabor_filter(image, freq,
                                                             angle)
-                values.append(real.reshape((225,1)))
+                shape_format = real.shape[0]*real.shape[1]
+                values.append(real.reshape((shape_format,1)))
         return hstack(values)
 
     @staticmethod
@@ -43,6 +44,7 @@ class TextureProcessor:
 
         Args:
             image(ndarray): image representation as array.
+
         """
         return rank.entropy(image[:,:, channel], disk(5))
 

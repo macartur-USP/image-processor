@@ -1,8 +1,8 @@
-"""Module to test iprocessor.base.texture_processor."""
+"""Module to test iprocessor.texture_processor."""
 import os
 import unittest
 import numpy as np
-from iprocessor.base.texture_processor import TextureProcessor
+from iprocessor.texture_processor import TextureProcessor
 from skimage.feature import greycomatrix
 from skimage import data
 

@@ -1,7 +1,7 @@
 """Module to process images."""
 from numpy import hstack,reshape
 from skimage.transform import resize
-from skimage.io import imread
+from skimage.io import imread, imsave
 from PIL import Image
 import numpy as np
 
@@ -16,8 +16,8 @@ class ImageProcessor:
         """Intance the image processor."""
         self.path = None
         self.image = None
-        self.features = []
-        self.resize_shape = (320, 240, 3)
+#        self.features = []
+#        self.resize_shape = (320, 240, 3)
 
     def open(self, image_path=None):
         """Open an image to be processed.
@@ -26,27 +26,27 @@ class ImageProcessor:
             image_path: path of an image
         """
         try:
-            self.image = imread(image_path)
+            self.image = imread(image_path, mode='RGB')
             self.path = image_path
         except (FileNotFoundError, AttributeError):
             self.image = None
             print(f'image {image_path} not found !!!')
 
-    def pre_process(self):
-        """Preprocess the image setted.
-
-        This method will:
-        - convert to hsv color space
-        - resize the image to 320 x 240 pixels
-        """
-        resized = Image.fromarray(self.image).resize(self.resize_shape[:2])
-        self.image = np.array(resized.convert('RGB'))
+#    def pre_process(self):
+#        """Preprocess the image setted.
+#
+#        This method will:
+#        - convert to hsv color space
+#        - resize the image to 320 x 240 pixels
+#        """
+#        resized = Image.fromarray(self.image)# .resize(self.resize_shape[:2])
+#        self.image = np.array(resized.convert('RGB'))
 
     def split_in_blocks(self, new_size=15):
         """Split current image into 15x15 pixels blocks."""
         image_blocks = []
-        for line in range(0, self.resize_shape[1], new_size):
-            for column in range(0, self.resize_shape[0], new_size):
+        for line in range(0, self.image.shape[1], new_size):
+            for column in range(0, self.image.shape[0], new_size):
                 image_blocks.append(self.image[line:line+new_size,
                                                column:column+new_size])
         return image_blocks
@@ -58,14 +58,27 @@ class ImageProcessor:
 
         """
         img_hsv = ColorProcessor.convert_rgb_to_hsv(image)
-        feature_hsv = img_hsv.reshape((225,3))
+
+        shape_format = img_hsv.shape[0]*img_hsv.shape[1]
+
+        feature_hsv = img_hsv.reshape((shape_format,3))
         img_gray = ColorProcessor.convert_rgb_to_grey(image)
-        feature_gray = img_gray.reshape((225,1))
-        feature_entropy = hstack([TextureProcessor.entropy(image,channel).reshape((225,1))  for channel in range(3)])
+        feature_gray = img_gray.reshape((shape_format,1))
+        feature_entropy = hstack([TextureProcessor.entropy(image,channel).reshape((shape_format,1))  for channel in range(3)])
         lbp = TextureProcessor.local_binary_pattern(image)
-        feature_lbp = lbp.reshape((225,1))
+        feature_lbp = lbp.reshape((shape_format,1))
         feature_gabor = TextureProcessor.get_gabor_properties(image)
         return hstack([feature_hsv,feature_gray, feature_entropy, feature_lbp, feature_gabor])
+
+    def save(self, image, path):
+        """Save an array as image.
+
+        Args:
+            image(ndarray): Array representing an image
+            path(string): image path
+
+        """
+        imsave(path, image)
 
     def get_fill_image(self, image):
         gray = ColorProcessor.convert_rgb_to_grey(image)

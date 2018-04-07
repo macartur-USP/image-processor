@@ -1,1 +1,1 @@
-"""Modules of iprocessor package."""
+"""Base modules used to process images."""

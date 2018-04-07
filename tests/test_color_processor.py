@@ -3,7 +3,7 @@ import numpy
 import unittest
 from skimage import data, color
 from skimage.exposure import histogram
-from iprocessor.base.color_processor import ColorProcessor
+from iprocessor.color_processor import ColorProcessor
 
 
 class TestColorProcessor(unittest.TestCase):

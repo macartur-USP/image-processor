@@ -14,8 +14,7 @@ class ColorProcessor:
     @staticmethod
     def convert_rgb_to_grey(image):
         """Convert a image to grey scale color space."""
-        gray = Image.fromarray(image)
-        return array(gray.convert('L'))
+        return color.rgb2gray(image)
 
     @staticmethod
     def create_color_histograms(image, nbins=15):
@@ -28,7 +27,6 @@ class ColorProcessor:
         hue_histogram = ColorProcessor.create_histogram(image, nbins, 0)
         saturation_histogram = ColorProcessor.create_histogram(image, nbins, 1)
         value_histogram = ColorProcessor.create_histogram(image, nbins, 2)
-
         return (hue_histogram, saturation_histogram, value_histogram)
 
     @staticmethod
