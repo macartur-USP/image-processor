@@ -76,7 +76,7 @@ setup(
     author = "Macartur Sousa",
     author_email = "macartur.sc@gmail.com",
     description = ("A simple image processor."),
-    setup_requires=['setuptools', 'sklearn', 'scikit-image'],
+    setup_requires=['setuptools', 'numpy', 'sklearn', 'scikit-image'],
     extras_require={
         'dev':[
                     'ipython',

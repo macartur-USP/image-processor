@@ -46,6 +46,8 @@ class Classifier:
         self.y = np.hstack(self.y)
         self.adaboost.fit(self.X,self.y )
 
-    def predict(self, X):
-        result= self.adaboost.predict(X)
+    def predict(self, X, shape=None):
+        result = self.adaboost.predict(X)
+        if shape:
+            result = result.reshape((shape[0], shape[1]))
         return result
