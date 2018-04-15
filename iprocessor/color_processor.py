@@ -9,12 +9,12 @@ class ColorProcessor:
     @staticmethod
     def convert_rgb_to_hsv(image):
         """Convert a image to hsv color space."""
-        return color.rgb2hsv(image)
+        return color.rgb2hsv(image[:,:,:3])
 
     @staticmethod
     def convert_rgb_to_grey(image):
         """Convert a image to grey scale color space."""
-        return color.rgb2gray(image)
+        return color.rgb2gray(image[:,:,:3])
 
     @staticmethod
     def create_color_histograms(image, nbins=15):
