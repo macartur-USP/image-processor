@@ -1,9 +1,7 @@
 """Modulo to process texture."""
 from numpy import hstack, pi
 from skimage.feature import local_binary_pattern
-from skimage.filters import gabor, rank
-from skimage.morphology import disk
-from skimage import util
+from skimage.filters import gabor
 
 from .color_processor import ColorProcessor
 
@@ -38,15 +36,6 @@ class TextureProcessor:
         image_grey = ColorProcessor.convert_rgb_to_grey(image)
         return local_binary_pattern(image_grey, P=8, R=1.0, method='default')
 
-    @staticmethod
-    def entropy(image, channel=0):
-        """Calculate the image entropy.
-
-        Args:
-            image(ndarray): image representation as array.
-
-        """
-        return rank.entropy(image[:,:, channel], disk(5))
 
     @staticmethod
     def gabor_filter(image, frequency=1, theta=0):

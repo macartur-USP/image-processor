@@ -18,16 +18,6 @@ class Classifier:
         self.X = list()
         self.y = list()
 
-    def convert_image(self, path):
-        files = glob(path+'/*')
-
-        for image in files:
-            image_processor = ImageProcessor()
-            image_processor.open(image)
-            fill_image = image_processor.get_fill_image(image_processor.image)
-            new_name = image.replace('raw', 'white_black')
-            image_processor.save(fill_image, new_name)
-
     def seed(self, path, expected=True):
         files = glob(path+'/*')
         for image in files:
